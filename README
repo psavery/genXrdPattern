@@ -1,0 +1,13 @@
+
+You need to have access to the Fox libraries to compile this executable.
+I downloaded Fox from here: https://github.com/vincefn/objcryst
+I compiled Fox with the following command:
+
+$ make Fox-nogui shared=0 -j4
+
+Now, when you run cmake for plotXrd, you may need to tell it
+where the Fox root directory is. You can do so as follows:
+
+$ cmake .. -DObjCryst_ROOT=<wherever>
+
+It will hopefully find all the libraries and be able to compile.
