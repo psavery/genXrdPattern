@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
   string filename(argv[1]);
 
-  cerr << "Loading: " << filename << endl;
+  cerr << "# Loading: " << filename << endl;
   ifstream in(filename.c_str());
 
   Crystal* pCryst = loadCIF(in);
@@ -80,14 +80,13 @@ int main(int argc, char* argv[])
   data.SetPowderPatternObs(obs);
   data.Prepare();
 
-  cerr << "Auto-simulating powder pattern:" << endl
-       << "   Crystal: " << pCryst->GetName()
-       << endl
-       << "   Wavelength: " << cif2patternWavelength << endl
-       << "   2theta: 0->" << cif2patternMax2Theta * RAD2DEG << "?("
+  cerr << "# Auto-simulating powder pattern:" << endl
+       << "#    Crystal: " << pCryst->GetName() << endl
+       << "#    Wavelength: " << cif2patternWavelength << endl
+       << "#    2theta: 0->" << cif2patternMax2Theta * RAD2DEG << "?("
        << cif2patternNbPoint << " points)" << endl
-       << "   peak width: " << cif2patternPeakWidth * RAD2DEG << "?" << endl
-       << "   to stdout" << endl;
+       << "#    peak width: " << cif2patternPeakWidth * RAD2DEG << "?" << endl
+       << "#    to stdout" << endl;
   CrystVector_REAL ttheta, icalc;
   icalc = data.GetPowderPatternCalc();
   icalc *= 100 / icalc.max();
