@@ -5,7 +5,7 @@ I compiled Fox with the following command:
 
 $ make Fox-nogui shared=0 -j4
 
-Now, when you run cmake for plotXrd, you may need to tell it
+Now, when you run cmake for genPowderDiffraction, you may need to tell it
 where the Fox root directory is. You can do so as follows:
 
 $ cmake .. -DObjCryst_ROOT=<wherever>

@@ -1,4 +1,4 @@
-/*  PlotXRD using ObjCryst++
+/*  Generate powder diffraction using ObjCryst++
     (c) 2017 Patrick Avery psavery@buffalo.edu
 
     This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
   string filename(argv[1]);
 
-  cerr << "# Loading: " << filename << endl;
+  cout << "# Loading: " << filename << endl;
   ifstream in(filename.c_str());
 
   Crystal* pCryst = loadCIF(in);
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   data.SetPowderPatternObs(obs);
   data.Prepare();
 
-  cerr << "# Auto-simulating powder pattern:" << endl
+  cout << "# Auto-simulating powder pattern:" << endl
        << "#    Crystal: " << pCryst->GetName() << endl
        << "#    Wavelength: " << cif2patternWavelength << endl
        << "#    2theta: 0->" << cif2patternMax2Theta * RAD2DEG << "?("
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
   ttheta = data.GetPowderPatternX();
   if (data.GetRadiation().GetWavelengthType() != WAVELENGTH_TOF)
     ttheta *= RAD2DEG;
-  cout << "#Simulated data for crystal:" << pCryst->GetName()
+  cout << "# Simulated data for crystal:" << pCryst->GetName()
        << endl;
   cout << "#    2Theta/TOF    ICalc" << endl;
   cout << FormatVertVector<REAL>(ttheta,icalc,12,4);

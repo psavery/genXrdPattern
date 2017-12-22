@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
-project(plotXrd)
+project(GenPowderDiffraction)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -14,8 +14,8 @@ if(UNIX)
   set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif(UNIX)
 
-add_executable(plotXrd plotxrd.cpp)
+add_executable(genPowderDiffraction genPowderDiffraction.cpp)
 
 # Link twice to prevent errors when libraries depend on each other
-target_link_libraries(plotXrd ${ObjCryst_LIBRARIES})
-target_link_libraries(plotXrd ${ObjCryst_LIBRARIES})
+target_link_libraries(genPowderDiffraction ${ObjCryst_LIBRARIES})
+target_link_libraries(genPowderDiffraction ${ObjCryst_LIBRARIES})
