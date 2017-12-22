@@ -59,19 +59,20 @@ int main(int argc, char* argv[])
 
   Crystal* pCryst = loadCIF(in);
 
+  PowderPatternDiffraction* diffData = new PowderPatternDiffraction();
+  diffData->SetCrystal(*pCryst);
+  diffData->SetReflectionProfilePar(PROFILE_PSEUDO_VOIGT,
+                                  cif2patternPeakWidth * cif2patternPeakWidth);
+  diffData->GetCrystal().SetUseDynPopCorr(true);
+
   PowderPattern data;
   data.SetRadiationType(RAD_XRAY);
   data.SetWavelength(cif2patternWavelength);
   data.SetPowderPatternPar(0, cif2patternMax2Theta / cif2patternNbPoint,
                            cif2patternNbPoint);
   // add CaF2 as a Crystalline phase
-  PowderPatternDiffraction diffData;
-  diffData.SetCrystal(*pCryst);
-  diffData.SetReflectionProfilePar(PROFILE_PSEUDO_VOIGT,
-                                   cif2patternPeakWidth * cif2patternPeakWidth);
-  diffData.GetCrystal().SetUseDynPopCorr(true);
   data.SetMaxSinThetaOvLambda(50.0);
-  data.AddPowderPatternComponent(diffData);
+  data.AddPowderPatternComponent(*diffData);
   // we don't have data, so just simulate (0->Pi/2)..
   // give a constant 'obs pattern of unit intensity
   CrystVector_REAL obs(cif2patternNbPoint);
