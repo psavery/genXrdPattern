@@ -16,19 +16,37 @@
 
 #define HAVE_SSE_MATHFUN
 
+#include <cstdlib>
 #include <sstream>
 
 #include "ObjCryst/ObjCryst/DiffractionDataSingleCrystal.h"
 #include "ObjCryst/ObjCryst/CIF.h"
 #include "ObjCryst/Quirks/VFNStreamFormat.h"
 
-const double cif2patternWavelength = 1.54056;
-const double cif2patternPeakWidth = 0.01;
-const long   cif2patternNbPoint = 1000;
-const double cif2patternMax2Theta = M_PI * .9;
-
 using namespace ObjCryst;
 using namespace std;
+
+// Case insensitive startsWith check
+bool iStartsWith(const std::string& s, const std::string& start)
+{
+  if (start.size() > s.size())
+    return false;
+
+  for (size_t i = 0; i < start.size(); ++i) {
+    if (tolower(start[i]) != tolower(s[i]))
+      return false;
+  }
+  return true;
+}
+
+// If there is an '=' sign, get the part to the righ of that
+std::string getValue(const std::string& s)
+{
+  size_t pos = s.find("=");
+  if (pos == string::npos)
+    return " ";
+  return s.substr(pos + 1);
+}
 
 // Load the cif and return a crystal
 Crystal* loadCIF(std::istream& in)
@@ -47,14 +65,27 @@ Crystal* loadCIF(std::istream& in)
 
 int main(int argc, char* argv[])
 {
-  if (argc != 2) {
-    cerr << "Usage: <exe> <cifFile>\n";
+  if (argc < 2) {
+    cerr << "Usage: <exe> <cifFile> [<options>]\n";
     return 1;
+  }
+
+  // Defaults
+  double wavelength = 1.54056;
+  double peakWidth = 0.01;
+  long   numPoints = 1000;
+  double max2Theta = M_PI * .9;
+
+  for (int i = 2; i < argc; ++i) {
+    if (iStartsWith(argv[i], "--wavelength="))
+      wavelength = atof(getValue(argv[i]).c_str());
+    else
+      cerr << "Warning: Unrecognized option: " << argv[i] << "\n";
   }
 
   string filename(argv[1]);
 
-  cout << "# Loading: " << filename << endl;
+  cerr << "# Loading: " << filename << endl;
   ifstream in(filename.c_str());
 
   Crystal* pCryst = loadCIF(in);
@@ -62,30 +93,30 @@ int main(int argc, char* argv[])
   PowderPatternDiffraction* diffData = new PowderPatternDiffraction();
   diffData->SetCrystal(*pCryst);
   diffData->SetReflectionProfilePar(PROFILE_PSEUDO_VOIGT,
-                                  cif2patternPeakWidth * cif2patternPeakWidth);
+                                  peakWidth * peakWidth);
   diffData->GetCrystal().SetUseDynPopCorr(true);
 
   PowderPattern data;
   data.SetRadiationType(RAD_XRAY);
-  data.SetWavelength(cif2patternWavelength);
-  data.SetPowderPatternPar(0, cif2patternMax2Theta / cif2patternNbPoint,
-                           cif2patternNbPoint);
+  data.SetWavelength(wavelength);
+  data.SetPowderPatternPar(0, max2Theta / numPoints,
+                           numPoints);
   // add CaF2 as a Crystalline phase
   data.SetMaxSinThetaOvLambda(50.0);
   data.AddPowderPatternComponent(*diffData);
   // we don't have data, so just simulate (0->Pi/2)..
   // give a constant 'obs pattern of unit intensity
-  CrystVector_REAL obs(cif2patternNbPoint);
+  CrystVector_REAL obs(numPoints);
   obs = 1;
   data.SetPowderPatternObs(obs);
   data.Prepare();
 
-  cout << "# Auto-simulating powder pattern:" << endl
+  cerr << "# Auto-simulating powder pattern:" << endl
        << "#    Crystal: " << pCryst->GetName() << endl
-       << "#    Wavelength: " << cif2patternWavelength << endl
-       << "#    2theta: 0->" << cif2patternMax2Theta * RAD2DEG << "?("
-       << cif2patternNbPoint << " points)" << endl
-       << "#    peak width: " << cif2patternPeakWidth * RAD2DEG << "?" << endl
+       << "#    Wavelength: " << wavelength << endl
+       << "#    2theta: 0->" << max2Theta * RAD2DEG << "?("
+       << numPoints << " points)" << endl
+       << "#    peak width: " << peakWidth * RAD2DEG << "?" << endl
        << "#    to stdout" << endl;
   CrystVector_REAL ttheta, icalc;
   icalc = data.GetPowderPatternCalc();
