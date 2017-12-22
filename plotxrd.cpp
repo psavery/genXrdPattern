@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
   string filename(argv[1]);
 
-  cout << "Loading: " << filename << endl;
+  cerr << "Loading: " << filename << endl;
   ifstream in(filename.c_str());
 
   Crystal* pCryst = loadCIF(in);
@@ -79,28 +79,23 @@ int main(int argc, char* argv[])
   obs = 1;
   data.SetPowderPatternObs(obs);
   data.Prepare();
-  // Save the powder pattern in text format
-  stringstream sst;
-  sst << filename << ".dat";
-  cout << "Auto-simulating powder pattern:" << endl
+
+  cerr << "Auto-simulating powder pattern:" << endl
        << "   Crystal: " << pCryst->GetName()
        << endl
        << "   Wavelength: " << cif2patternWavelength << endl
        << "   2theta: 0->" << cif2patternMax2Theta * RAD2DEG << "?("
        << cif2patternNbPoint << " points)" << endl
        << "   peak width: " << cif2patternPeakWidth * RAD2DEG << "?" << endl
-       << "   to FILE:" << sst.str() << endl;
-  ofstream out(sst.str().c_str());
-  out.imbue(std::locale::classic());
+       << "   to stdout" << endl;
   CrystVector_REAL ttheta, icalc;
   icalc = data.GetPowderPatternCalc();
   icalc *= 100 / icalc.max();
   ttheta = data.GetPowderPatternX();
   if (data.GetRadiation().GetWavelengthType() != WAVELENGTH_TOF)
     ttheta *= RAD2DEG;
-  out << "#Simulated data for crystal:" << pCryst->GetName()
-      << endl;
-  out << "#    2Theta/TOF    ICalc" << endl;
-  out << FormatVertVector<REAL>(ttheta,icalc,12,4);
-  out.close();
+  cout << "#Simulated data for crystal:" << pCryst->GetName()
+       << endl;
+  cout << "#    2Theta/TOF    ICalc" << endl;
+  cout << FormatVertVector<REAL>(ttheta,icalc,12,4);
 }
