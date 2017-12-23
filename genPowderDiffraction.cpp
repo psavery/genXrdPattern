@@ -43,8 +43,9 @@ bool iStartsWith(const std::string& s, const std::string& start)
 std::string getValue(const std::string& s)
 {
   size_t pos = s.find("=");
-  if (pos == string::npos)
+  if (pos == string::npos || pos + 1 >= s.size())
     return " ";
+
   return s.substr(pos + 1);
 }
 
@@ -67,8 +68,28 @@ int main(int argc, char* argv[])
 {
   if (argc < 2) {
     cerr << "Usage: <exe> <cifFile> [<options>]\n";
+    cerr << "To use stdin instead, replace <cifFile> with "
+         << "'--read-from-stdin'\n";
+    cerr << "Use --help for more info.\n";
     return 1;
   }
+
+  if (iStartsWith(argv[1], "--help")) {
+    cerr << "Usage: <exe> <cifFile> [<options>]\n";
+    cerr << "To use stdin instead, replace <cifFile> with "
+         << "'--read-from-stdin'\n";
+    cerr << "Options:\n"
+         << "  --wavelength=<num>: set the wavelength (Angstroms)\n"
+         << "  --peakwidth=<num>:  set the peak width (degrees)\n"
+         << "  --numpoints=<num>:  set the number of points\n"
+         << "  --max2theta=<num>:  set the max 2*theta (degrees)\n";
+    return 0;
+  }
+
+  bool readFromStdin = false;
+
+  if (iStartsWith(argv[1], "--read-from-stdin"))
+    readFromStdin = true;
 
   // Defaults
   double wavelength = 1.54056;
@@ -76,24 +97,41 @@ int main(int argc, char* argv[])
   long   numPoints = 1000;
   double max2Theta = M_PI * .9;
 
+  // Process the arguments
   for (int i = 2; i < argc; ++i) {
     if (iStartsWith(argv[i], "--wavelength="))
       wavelength = atof(getValue(argv[i]).c_str());
+    else if (iStartsWith(argv[i], "--peakwidth="))
+      peakWidth = atof(getValue(argv[i]).c_str()) * DEG2RAD;
+    else if (iStartsWith(argv[i], "--numpoints="))
+      numPoints = atoi(getValue(argv[i]).c_str());
+    else if (iStartsWith(argv[i], "--max2theta="))
+      max2Theta = atof(getValue(argv[i]).c_str()) * DEG2RAD;
     else
       cerr << "Warning: Unrecognized option: " << argv[i] << "\n";
   }
 
-  string filename(argv[1]);
+  if (wavelength < 1.e-6)
+    cerr << "Warning: Wavelength is too small. A crash may be eminent.\n";
 
-  cerr << "# Loading: " << filename << endl;
-  ifstream in(filename.c_str());
+  string filename(readFromStdin ? "" : argv[1]);
 
-  Crystal* pCryst = loadCIF(in);
+  cerr << "# Loading: " << (readFromStdin ? "stdin" : filename) << endl;
+
+  // Read either from the file or stdin
+  Crystal* pCryst;
+  if (readFromStdin) {
+    pCryst = loadCIF(cin);
+  }
+  else {
+    ifstream in(filename.c_str());
+    pCryst = loadCIF(in);
+  }
 
   PowderPatternDiffraction* diffData = new PowderPatternDiffraction();
   diffData->SetCrystal(*pCryst);
   diffData->SetReflectionProfilePar(PROFILE_PSEUDO_VOIGT,
-                                  peakWidth * peakWidth);
+                                    peakWidth * peakWidth);
   diffData->GetCrystal().SetUseDynPopCorr(true);
 
   PowderPattern data;
