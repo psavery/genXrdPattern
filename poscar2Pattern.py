@@ -50,7 +50,7 @@ rc = p.returncode
 output = output.decode('utf-8')
 
 #print('rc is:', rc)
-#print('output is:', output)
+print('output is:', output)
 print(err.decode('utf-8'))
 
 x = []
