@@ -10,9 +10,9 @@ find_package(ObjCryst REQUIRED)
 include_directories(${ObjCryst_INCLUDE_DIR})
 
 # We want to build a static binary
-if(UNIX)
+if(UNIX OR MINGW)
   set(CMAKE_EXE_LINKER_FLAGS "-static")
-endif(UNIX)
+endif(UNIX OR MINGW)
 
 add_executable(genPowderDiffraction genPowderDiffraction.cpp)
 
