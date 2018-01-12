@@ -5,7 +5,7 @@ I compiled Fox with the following command:
 
 $ make Fox-nogui shared=0 -j4
 
-Now, when you run cmake for genPowderDiffraction, you may need to tell it
+Now, when you run cmake for genXrdPattern, you may need to tell it
 where the Fox root directory is. You can do so as follows:
 
 $ cmake .. -DObjCryst_ROOT=<wherever>
@@ -13,7 +13,7 @@ $ cmake .. -DObjCryst_ROOT=<wherever>
 It will hopefully find all the libraries and be able to compile.
 
 poscar2Pattern.py takes a poscar file and converts it to a cif file with
-obabel. It then uses the cif file to run genPowderPattern, and it plots
+obabel. It then uses the cif file to run genXrdPattern, and it plots
 the results with matplotlib.
 
-genPowderPattern must be in './build/' relative to the python file.
+genXrdPattern must be in './build/' relative to the python file.

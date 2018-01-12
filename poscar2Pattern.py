@@ -11,7 +11,7 @@ if len(sys.argv) < 2:
   print("Usage: <exe> <poscar> [options]")
   sys.exit("Type 'Use --help' for help on options")
 
-parser = argparse.ArgumentParser(description='Options for powder diffraction')
+parser = argparse.ArgumentParser(description='Options for the XRD pattern')
 parser.add_argument('poscar', type=str,
                     help='The POSCAR file to use')
 parser.add_argument('--wavelength', type=float, default=1.54056,
@@ -37,7 +37,7 @@ rc = p.returncode
 #print('cifData is:', cifData)
 #print('err is:', err)
 
-cmd = ['./build/genPowderDiffraction', '--read-from-stdin',
+cmd = ['./build/genXrdPattern', '--read-from-stdin',
        '--wavelength=' + str(args['wavelength']),
        '--peakwidth='  + str(args['peakwidth']),
        '--numpoints='  + str(args['numpoints']),
@@ -73,7 +73,7 @@ for i, line in enumerate(lines):
 
 plt.xlabel(r'2$\theta$ (degrees)')
 plt.ylabel('Intensity')
-plt.title('Powder Pattern')
+plt.title('XRD Pattern')
 
 plt.plot(x, y, 'r')
 plt.show()

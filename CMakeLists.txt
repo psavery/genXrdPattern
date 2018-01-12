@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
-project(GenPowderDiffraction)
+project(GenXrdPattern)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
@@ -14,8 +14,8 @@ if(UNIX OR MINGW)
   set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif(UNIX OR MINGW)
 
-add_executable(genPowderDiffraction genPowderDiffraction.cpp)
+add_executable(genXrdPattern genXrdPattern.cpp)
 
 # Link twice to prevent errors when libraries depend on each other
-target_link_libraries(genPowderDiffraction ${ObjCryst_LIBRARIES})
-target_link_libraries(genPowderDiffraction ${ObjCryst_LIBRARIES})
+target_link_libraries(genXrdPattern ${ObjCryst_LIBRARIES})
+target_link_libraries(genXrdPattern ${ObjCryst_LIBRARIES})

@@ -11,7 +11,7 @@ if len(sys.argv) < 2:
   print("Usage: <exe> <cif> [options]")
   sys.exit("Type 'Use --help' for help on options")
 
-parser = argparse.ArgumentParser(description='Options for powder diffraction')
+parser = argparse.ArgumentParser(description='Options for the XRD pattern')
 parser.add_argument('cif', type=str,
                     help='The CIF file to use')
 parser.add_argument('--wavelength', type=float, default=1.54056,
@@ -30,7 +30,7 @@ fileName = args['cif']
 with open(fileName, 'r') as rf:
   cifData = rf.read().encode('utf-8')
 
-cmd = ['./build/genPowderDiffraction', '--read-from-stdin',
+cmd = ['./build/genXrdPattern', '--read-from-stdin',
        '--wavelength=' + str(args['wavelength']),
        '--peakwidth='  + str(args['peakwidth']),
        '--numpoints='  + str(args['numpoints']),
@@ -66,7 +66,7 @@ for i, line in enumerate(lines):
 
 plt.xlabel(r'2$\theta$ (degrees)')
 plt.ylabel('Intensity')
-plt.title('Powder Pattern')
+plt.title('XRD Pattern')
 
 plt.plot(x, y, 'r')
 plt.show()
