@@ -24,7 +24,7 @@ script:
  - cd build
  - cmake .. -DObjCryst_ROOT=${objcryst_dir}
  - make
- - ./genXrdPattern
+ - ./genXrdPattern || (exit 0)
 
 deploy:
   - provider: releases
